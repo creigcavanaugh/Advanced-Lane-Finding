@@ -25,44 +25,44 @@ The goals / steps of this project are the following:
 [image5]: ./output_images/curveplot.png "Fit Visual"
 [image6]: ./output_images/video_snapshot.png "Output"
 [video1]: ./video_output.mp4 "Video"
-[code1]: ./adv_lane_det.py "Code"
+
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
-###Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
 ---
-###Writeup / README
+### Writeup / README
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
+#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
 
 You're reading it!
-###Camera Calibration
+### Camera Calibration
 
-####1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
+#### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
 
-The code for this step is contained in lines 435 through 483 of the file called ![adv_lane_det.py][code1].  
+The code for this step is contained in lines 435 through 483 of the file called [`adv_lane_det.py`](adv_lane_det.py) .  
 
 I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
 
 I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result: 
 
-###Original Image
+### Original Image
 ![alt text][image0]
 
-###Undistorted Image
+### Undistorted Image
 ![alt text][image1]
 
-###Pipeline (single images)
+### Pipeline (single images)
 
-####1. Provide an example of a distortion-corrected image.
+#### 1. Provide an example of a distortion-corrected image.
 To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
 ![alt text][image2]
-####2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
+#### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines 99 through 146 in `adv_lane_det.py`).  Here's an example of my output for this step. In this example, the blue represents the thresholding derived from the saturation and lightness color space and the red represents the combined sobel gradient thresholds.
 
 ![alt text][image3]
 
-####3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
+#### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
 The code for my perspective transform appears in lines 185 through 219 in the file `adv_lane_det.py`. The code utilizes the `getPerspectiveTransform` and `warpPerspective` OpenCV functions, and takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
 
@@ -104,13 +104,13 @@ I verified that my perspective transform was working as expected by drawing the 
 ![alt text][image4a]
 ![alt text][image4b]
 
-####4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
+#### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
 I implemented this step in lines 221 through 320 in my code in `adv_lane_det.py`.  I utilized the sliding window approach as described in the 'Finding the Lanes' section of the Advanced Lane Finding lesson, utilizing the numpy `polyfit` function to perform a least squares 2nd order polynomial fit.
 
 ![alt text][image5]
 
-####5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
+#### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
 I did this in lines 308 through 363 in my code in `adv_lane_det.py`.  It is primarily based on the code example provided in the 'Measuring Curvature' section of the Advanced Lane Finding lesson, and I tuned the calculation by applying the following pixel to meter correction factors.
 ```
@@ -119,7 +119,7 @@ xm_per_pix = 3.65/1047 # meters per pixel in x dimension
 ```
 
 
-####6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
+#### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
 I implemented this step in lines 379 through 424 in my code in `adv_lane_det.py` in the function `pipeline()`.  To gain further understanding of how the result was derived, I have superimposed the birds-eye view and lane detection outputs onto the image. Here is an example of my result on a test image:
 
@@ -127,17 +127,17 @@ I implemented this step in lines 379 through 424 in my code in `adv_lane_det.py`
 
 ---
 
-###Pipeline (video)
+### Pipeline (video)
 
-####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
+#### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
 Here's a [link to my video result][video1]
 
 ---
 
-###Discussion
+### Discussion
 
-####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
 
